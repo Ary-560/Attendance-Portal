@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Attendance Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--top:#f4682d;--bg:#f2f5fa;--card:#fff;--ink:#1f2937;--mute:#6b7688;--line:#e6eaf1;--row:#f6f8fc;--c1:#3b66f5;--c2:#a3b9fa;--acc:#f4682d;--accSoft:#fde9e0;--ok:#16895c;--okBg:#d9f2e6;--no:#d0443b;--noBg:#fbe3e0;--late:#a8680c;--lateBg:#fbebcc;--sh:0 1px 3px rgba(31,41,55,.06);
+--f:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--top:#c9501f;--bg:#0f1622;--card:#182131;--ink:#e8edf6;--mute:#9aa8bf;--line:#26324a;--row:#1c2739;--c1:#6a8bff;--c2:#34456f;--accSoft:#3a2418;--ok:#4cc790;--okBg:#143a2b;--no:#f0766f;--noBg:#41201f;--late:#ecb457;--lateBg:#403112;--sh:none}}
+:root[data-theme="dark"]{--top:#c9501f;--bg:#0f1622;--card:#182131;--ink:#e8edf6;--mute:#9aa8bf;--line:#26324a;--row:#1c2739;--c1:#6a8bff;--c2:#34456f;--accSoft:#3a2418;--ok:#4cc790;--okBg:#143a2b;--no:#f0766f;--noBg:#41201f;--late:#ecb457;--lateBg:#403112;--sh:none}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 var(--f)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--top);z-index:30}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:3px solid var(--c1);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;height:56px;background:var(--top);color:#fff;display:flex;align-items:center;gap:12px;padding:0 16px}
+.top .brand{font-weight:700;font-size:18px;display:flex;align-items:center;gap:10px;flex:1}
+.top .brand small{display:block;font-size:10px;font-weight:500;opacity:.85;letter-spacing:.08em;text-transform:uppercase;line-height:1}
+.lg{width:34px;height:34px;border-radius:10px;background:#fff;color:var(--top);display:grid;place-items:center}
+.ib{background:#ffffff26;border:0;color:#fff;border-radius:8px;height:36px;padding:0 12px;font-weight:600;display:flex;align-items:center;gap:6px}
+.hello{display:flex;align-items:center;gap:9px;font-size:12px;line-height:1.2}
+.av{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--top);display:grid;place-items:center;font-weight:700}
+#burger{display:none}
+.shell{display:flex;align-items:flex-start}
+aside{width:220px;flex:none;background:var(--card);border-right:1px solid var(--line);position:sticky;top:calc(56px + env(safe-area-inset-top,0px));height:calc(100vh - 56px);padding:12px 0;overflow-y:auto}
+aside button{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:12px 18px;color:var(--mute);font-weight:500;text-align:left;border-left:4px solid transparent}
+aside button.on{background:var(--accSoft);color:var(--acc);border-left-color:var(--acc);font-weight:700}
+aside svg,.ib svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+main{flex:1;min-width:0;padding:22px 24px 40px;max-width:1100px}
+h1{font-size:21px;font-weight:600;margin:0 0 4px}h3{font-size:14px;margin:0;font-weight:700}
+.sub{color:var(--mute);margin:0 0 16px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 18px}
+.sel,select,input{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:9px 12px;font-weight:500}
+input[type=date]{min-height:38px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--sh);margin-bottom:18px}
+.grid2{display:grid;grid-template-columns:5fr 7fr;gap:18px}
+.grid2 .card{margin:0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--sh);display:flex;gap:12px;align-items:center}
+.stat i{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-style:normal;font-weight:700;background:var(--accSoft);color:var(--acc)}
+.stat b{display:block;font-size:22px;line-height:1.1}.stat span{color:var(--mute);font-size:12px}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}
+.donut{display:block;margin:6px auto 12px;width:210px;max-width:100%}
+.legend{display:flex;justify-content:center;gap:22px;color:var(--mute);font-size:12.5px}
+.legend span::before{content:"";display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px;background:var(--c1);vertical-align:-1px}
+.legend span+span::before{background:var(--c2)}
+.chart{display:flex;gap:8px;height:210px}
+.yax{display:flex;flex-direction:column;justify-content:space-between;font-size:11px;color:var(--mute);text-align:right;padding-bottom:22px}
+.bars{flex:1;display:flex;gap:10px;align-items:stretch;background:repeating-linear-gradient(to top,transparent 0,transparent calc(25% - 1px),var(--line) calc(25% - 1px),var(--line) 25%);background-size:100% calc(100% - 22px);background-repeat:no-repeat}
+.b{flex:1;display:flex;flex-direction:column;min-width:0}
+.b div{flex:1;display:flex;flex-direction:column;justify-content:flex-end}
+.b i{display:block;background:var(--c2);width:100%}.b i+i{background:var(--c1)}
+.b small{height:22px;font-size:10.5px;color:var(--mute);text-align:center;padding-top:4px;white-space:nowrap;overflow:hidden}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:12.5px;text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 12px;white-space:nowrap;font-size:13px}
+tbody tr:nth-child(odd) td{background:var(--row)}
+.bar{height:9px;background:var(--c2);border-radius:9px;overflow:hidden;min-width:80px}.bar i{display:block;height:100%;background:var(--c1)}.bar i.low{background:var(--no)}
+.tag{padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600;display:inline-block}
+.tag.ok{background:var(--okBg);color:var(--ok)}.tag.no{background:var(--noBg);color:var(--no)}.tag.late{background:var(--lateBg);color:var(--late)}
+.btn{border:1px solid var(--line);background:var(--card);padding:9px 16px;border-radius:8px;font-weight:600}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#fff}.btn.sm{padding:5px 10px;font-size:12px}.btn.del{color:var(--no)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--mute);flex:1;min-width:130px}
+label input,label select{width:100%}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--card);padding:6px 13px;font-weight:600;color:var(--mute)}.seg button+button{border-left:1px solid var(--line)}
+.seg .P.on{background:var(--ok);color:#fff}.seg .A.on{background:var(--no);color:#fff}.seg .L.on{background:#e59a1f;color:#2a1a00}
+.ring{--v:0;--c:var(--c1);width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--v)*1%),var(--c2) 0);display:grid;place-items:center;flex:none}
+.ring.low{--c:var(--no)}.ring div{width:92px;height:92px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:24px;font-weight:700}
+.note{padding:11px 14px;border-radius:10px;background:var(--lateBg);color:var(--late);font-weight:600;margin-top:14px}.note.ok{background:var(--okBg);color:var(--ok)}
+.msg{color:var(--ok);font-weight:600;margin-left:10px}.err{color:var(--no);font-size:12px;min-height:18px}.muted{color:var(--mute)}
+.hide{display:none!important}
+#modal{position:fixed;inset:0;background:#0008;z-index:40;display:grid;place-items:center;padding:16px}
+.mc{background:var(--card);border-radius:16px;max-width:400px;width:100%;padding:24px;box-shadow:0 20px 60px #0005}
+.mc h3{font-size:19px;margin-bottom:2px}.mc label{margin-bottom:12px}
+.seg.role{display:flex;margin:14px 0}.seg.role button{flex:1}.seg.role button.on{background:var(--acc);color:#fff}
+#acct{display:flex;align-items:center;gap:10px}
+.gnote{padding:11px 14px;border-radius:10px;background:var(--accSoft);color:var(--acc);font-weight:600;margin:0 0 14px}
+#scrim{display:none}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+@media(max-width:860px){
+ #burger{display:flex}.hello span{display:none}
+ aside{position:fixed;left:0;top:calc(56px + env(safe-area-inset-top,0px));bottom:0;height:auto;z-index:25;transform:translateX(-100%);transition:transform .2s;box-shadow:4px 0 20px rgba(0,0,0,.2)}
+ aside.open{transform:none}
+ #scrim.open{display:block;position:fixed;inset:0;background:#0006;z-index:22}
+ main{padding:16px 14px 40px}
+}
+
+:root{--g1:#ff7a3d;--g2:#f4366e;--g3:#8f3bd6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--g1:#c9501f;--g2:#b02752;--g3:#6a2a9a}}
+:root[data-theme="dark"]{--g1:#c9501f;--g2:#b02752;--g3:#6a2a9a}
+body::before{background:linear-gradient(110deg,var(--g1),var(--g2))}
+.top{background:linear-gradient(110deg,var(--g1),var(--g2) 60%,var(--g3));box-shadow:0 4px 18px rgba(244,54,110,.28)}
+.lg,.av{color:var(--g2)}
+.ib#loginOpen{background:#fff;color:var(--g2);font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.gl{border:0;border-radius:12px;padding:11px 20px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--g1),var(--g2));box-shadow:0 6px 16px rgba(244,54,110,.35),inset 0 1px 0 rgba(255,255,255,.45);position:relative;overflow:hidden;transition:transform .15s}
+.gl:hover{transform:translateY(-2px)}
+.gl.alt{background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);backdrop-filter:blur(6px)}
+.gl::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.45) 50%,transparent 65%);transform:translateX(-120%);transition:transform .6s}
+.gl:hover::after{transform:translateX(120%)}
+.hero{position:relative;overflow:hidden;border-radius:22px;padding:44px 36px;margin-bottom:22px;color:#fff;background:radial-gradient(600px 300px at 85% 0%,rgba(255,122,61,.55),transparent 60%),radial-gradient(500px 300px at 0% 100%,rgba(143,59,214,.6),transparent 60%),linear-gradient(135deg,#101a3a,#1c2a63);display:flex;gap:28px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 14px 40px rgba(20,30,80,.35)}
+.sheen{position:absolute;inset:0;background:linear-gradient(110deg,transparent 40%,rgba(255,255,255,.14) 50%,transparent 60%);transform:translateX(-100%);animation:sh 5s ease-in-out infinite;pointer-events:none}
+@keyframes sh{0%,60%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.hl{max-width:520px;position:relative}.hero h1{font-size:clamp(26px,4.4vw,40px);line-height:1.15;font-weight:800;margin:12px 0;color:#fff}
+.hero p{opacity:.88;margin:0 0 20px;font-size:15px}
+.pill{display:inline-block;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:600;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3)}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.hs{display:grid;gap:12px;position:relative}
+.chip{min-width:170px;padding:14px 18px;border-radius:16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(10px);font-size:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.chip b{display:block;font-size:26px}
+.welcome{position:relative;overflow:hidden;border-radius:16px;padding:20px 24px;margin-bottom:20px;color:#fff;background:linear-gradient(120deg,#1c2a63,var(--g3) 70%,var(--g2))}
+.welcome h2{margin:0;font-size:20px}.welcome p{margin:4px 0 0;opacity:.88}
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:26px}
+.feat .card{margin:0;transition:transform .2s;border-top:3px solid var(--g2)}.feat .card:hover{transform:translateY(-4px)}.feat b{display:block;font-size:15px;margin-bottom:4px}
+.card,.stat{border-radius:16px;box-shadow:0 8px 24px rgba(31,41,55,.07)}
+.stat{transition:transform .2s}.stat:hover{transform:translateY(-3px)}
+.stat i{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;box-shadow:0 4px 10px rgba(244,54,110,.35)}
+.b i+i{background:linear-gradient(180deg,#6f93ff,var(--c1))}
+.bar i{background:linear-gradient(90deg,#6f93ff,var(--c1))}.bar i.low{background:var(--no)}
+.btn.pri{background:linear-gradient(135deg,var(--g1),var(--g2));border:0;box-shadow:0 4px 12px rgba(244,54,110,.3),inset 0 1px 0 rgba(255,255,255,.4)}
+aside button.on{background:linear-gradient(90deg,var(--accSoft),transparent);border-left-color:var(--g2);color:var(--g2)}
+#modal{background:rgba(10,16,40,.6);backdrop-filter:blur(6px)}
+.mc{border-radius:20px;border-top:4px solid var(--g2)}
+.seg.role button.on{background:var(--g2);color:#fff}
+.guest aside,.guest #burger{display:none}.guest .shell{justify-content:center}.guest main{margin:0 auto;width:100%}
+@media(max-width:860px){.feat{grid-template-columns:1fr}.hero{padding:28px 20px}.hs{grid-template-columns:repeat(3,1fr);width:100%}.chip{min-width:0;padding:10px}.chip b{font-size:20px}}
+@media (prefers-reduced-motion:reduce){.sheen{animation:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="ib" id="burger" aria-label="Menu"></button>
+  <div class="brand"><span class="lg" id="lg"></span><div>Attendance Portal<small>Digital Campus</small></div></div>
+  <button class="ib" id="theme" aria-label="Switch light or dark theme">&#9680;</button>
+  <div id="acct"></div>
+</header>
+<div class="shell"><aside id="side"></aside><div id="scrim"></div><main id="main"></main></div>
+<div id="modal" class="hide" role="dialog" aria-modal="true" aria-label="Login"><div class="mc">
+  <div class="ch" style="margin:0"><h3>Login</h3><button class="btn sm" id="mclose" aria-label="Close">&#10005;</button></div>
+  <p class="muted" style="margin:2px 0 0">Choose who you are to continue.</p>
+  <div class="seg role" id="roles"></div><div id="lform"></div><div class="err" id="lerr"></div>
+  <button class="btn pri" style="width:100%" id="loginBtn">Sign in</button>
+  <p class="muted" style="font-size:12px;margin:10px 0 0" id="lhint"></p>
+</div></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const IC={grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',check:'M4 12l5 5L20 6',users:'M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM21 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',chart:'M4 20V10M10 20V4M16 20v-7M22 20H2',user:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',menu:'M3 6h18M3 12h18M3 18h18'};
+const ic=n=>`<svg viewBox="0 0 24 24"><path d="${IC[n]}"/></svg>`;
+const PAGES={dash:['Dashboard','grid'],att:['Mark attendance','check'],stu:['Classes & students','users'],rep:['Reports','chart'],view:['Student / parent view','user']};
+let session=null,lrole='teacher',D={classes:[],students:[],att:{}},page='dash',selClass='all',period=7,selDate=new Date().toISOString().slice(0,10),tmp={},flash='',vs='';
+const uid=()=>Math.random().toString(36).slice(2,9);
+function load(){try{const r=localStorage.getItem('oams_v2');if(r)D=JSON.parse(r)}catch(e){}}
+function save(){try{localStorage.setItem('oams_v2',JSON.stringify(D))}catch(e){}}
+function demo(){
+  D={classes:[],students:[],att:{}};
+  const sets=[{n:'TYBSc CS – Sem V',pre:'98765000',names:['Aarav Sharma','Diya Patil','Rohan Verma','Sneha Iyer','Kabir Singh','Meera Nair','Yash Gupta','Priya Joshi','Arjun Kulkarni','Isha Deshmukh','Neil Fernandes','Tanvi More','Omkar Shinde','Riya Mehta','Sahil Khan'],weak:[2,9]},
+  {n:'SYBSc CS – Sem III',pre:'98765100',names:['Vedant Pawar','Ananya Rao','Harsh Jadhav','Kavya Menon','Aditya Bhosale','Pooja Yadav','Manav Shah','Simran Kaur','Tejas Gaikwad','Nidhi Tiwari','Rahul Dubey','Shruti Naik'],weak:[4,7]},
+  {n:'FYBSc CS – Sem I',pre:'98765200',names:['Atharv Salunke','Mitali Kamat','Dev Chavan','Aditi Rane','Karan Thakur','Jiya Parekh','Samar Ansari','Trisha Dsouza','Pranav Mishra','Ritika Sawant','Varun Kadam','Zoya Sheikh','Soham Bhagat','Anushka Pillai'],weak:[1,6,10]}];
+  const dates=[];for(let d=0;dates.length<30;d++){const t=new Date(Date.now()-d*864e5);if(t.getDay()!==0)dates.push(t.toISOString().slice(0,10))}
+  sets.forEach(S=>{const cid=uid();D.classes.push({id:cid,name:S.n});
+    const ids=S.names.map((nm,i)=>{const id=uid();D.students.push({id,classId:cid,roll:i+1,name:nm,parent:S.pre+String(i+1).padStart(2,'0')});return id});
+    const pr=ids.map((_,i)=>S.weak.includes(i)?.5+Math.random()*.12:.82+Math.random()*.16);
+    dates.forEach((dt,di)=>{const m={};ids.forEach((id,i)=>{const r=Math.random(),dip=di%6===2?.14:0;m[id]=r<pr[i]-dip?'P':r<pr[i]-dip+.06?'L':'A'});D.att[cid+'|'+dt]=m})});
+  save();
+}
+const dts=c=>Object.keys(D.att).filter(k=>k.startsWith(c+'|')).map(k=>k.split('|')[1]).sort();
+function score(sid,cid,n){let ds=dts(cid).filter(d=>D.att[cid+'|'+d][sid]);if(n)ds=ds.slice(-n);if(!ds.length)return null;let s=0,P=0,L=0,A=0;ds.forEach(d=>{const m=D.att[cid+'|'+d][sid];if(m==='P'){s++;P++}else if(m==='L'){s+=.5;L++}else A++});return{p:s/ds.length*100,days:ds.length,P,L,A,s}}
+const bar=v=>`<div class="bar"><i class="${v<75?'low':''}" style="width:${Math.max(3,v)}%"></i></div>`;
+const cname=id=>(D.classes.find(c=>c.id===id)||{}).name||'';
+const fd=d=>new Date(d+'T00:00').toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short'});
+const classOpts=(all)=>(all?`<option value="all" ${selClass==='all'?'selected':''}>All classes</option>`:'')+D.classes.map(c=>`<option value="${c.id}" ${c.id===selClass?'selected':''}>${esc(c.name)}</option>`).join('');
+
+function heroHtml(){
+  if(session){const k=session.ids?D.students.find(x=>x.id===session.ids[0]):null;const nm=role()==='teacher'?'Teacher':role()==='student'?(k?k.name:'Student'):'Parent of '+(k?k.name.split(' ')[0]:'child');
+    return `<div class="welcome"><div class="sheen"></div><h2>Welcome back, ${esc(nm)}</h2><p>${role()==='teacher'?'Mark attendance, manage students and track defaulters.':'Open the attendance page in the menu to see the full record.'}</p></div>`}
+  return `<section class="hero"><div class="sheen"></div><div class="hl"><span class="pill">Smart campus attendance</span><h1>Attendance made simple, clear and instant</h1><p>Teachers mark attendance in seconds. Students and parents check it any time, on any device.</p><div class="cta"><button class="gl" data-login="teacher">Teacher login</button><button class="gl alt" data-login="student">Student login</button><button class="gl alt" data-login="parent">Parent login</button></div></div><div class="hs"><div class="chip"><b>${D.students.length}</b>Students</div><div class="chip"><b>${D.classes.length}</b>Classes</div><div class="chip"><b>75%</b>Minimum required</div></div></section>
+  <div class="feat"><div class="card"><b>For teachers</b>Mark Present, Absent or Late, spot defaulters and export reports.</div><div class="card"><b>For students</b>See your percentage and how many lectures you can still miss.</div><div class="card"><b>For parents</b>Follow your child with a mobile number and PIN.</div></div>`}
+function dash(){
+  const cids=selClass==='all'?D.classes.map(c=>c.id):[selClass];
+  const studs=D.students.filter(s=>cids.includes(s.classId));
+  const rows=studs.map(x=>({x,r:score(x.id,x.classId,period)})).filter(o=>o.r);
+  const avg=rows.length?rows.reduce((a,o)=>a+o.r.p,0)/rows.length:0;
+  const low=rows.filter(o=>o.r.p<75).sort((a,b)=>a.r.p-b.r.p);
+  const byD={};cids.forEach(c=>dts(c).forEach(d=>{const o=byD[d]=byD[d]||{s:0,n:0};Object.values(D.att[c+'|'+d]).forEach(v=>{o.n++;o.s+=v==='P'?1:v==='L'?.5:0})}));
+  const days=Object.keys(byD).sort().slice(-7);
+  const C=2*Math.PI*78,pd=C*avg/100;
+  return heroHtml()+`<h1>${session?'Attendance dashboard':'Live attendance dashboard'}</h1><p class="sub">Overview of attendance across classes</p>
+  <div class="filters"><span class="sel">2026-27</span><span class="sel">ODD</span><select id="fc">${classOpts(1)}</select><select id="fp">${[7,14,30].map(n=>`<option value="${n}" ${n===period?'selected':''}>Last ${n} lecture days</option>`).join('')}</select></div>
+  <div class="stats"><div class="stat"><i>S</i><div><b>${studs.length}</b><span>Students</span></div></div><div class="stat"><i>L</i><div><b>${days.length?Math.min(period,Object.keys(byD).length):0}</b><span>Lectures in period</span></div></div><div class="stat"><i>%</i><div><b>${avg.toFixed(1)}%</b><span>Average attendance</span></div></div><div class="stat"><i>!</i><div><b>${low.length}</b><span>Below 75%</span></div></div></div>
+  <div class="grid2" style="margin-bottom:18px"><div class="card"><div class="ch"><h3>Overall attendance</h3><span class="sel">${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</span></div>
+   <svg class="donut" viewBox="0 0 200 200" role="img" aria-label="Overall attendance ${avg.toFixed(0)} percent"><circle cx="100" cy="100" r="78" fill="none" stroke="var(--c2)" stroke-width="30"/><defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7f9fff"/><stop offset="1" stop-color="#2f56e8"/></linearGradient></defs><circle cx="100" cy="100" r="78" fill="none" stroke="url(#dg)" stroke-width="30" stroke-dasharray="${pd} ${C}" transform="rotate(-90 100 100)"/><text x="100" y="110" text-anchor="middle" font-size="34" font-weight="600" fill="var(--c1)" font-family="inherit">${avg.toFixed(0)}%</text></svg>
+   <div class="legend"><span>Present</span><span>Absent</span></div></div>
+  <div class="card"><div class="ch"><h3>Comparison: daily attendance</h3><span class="sel">Last ${days.length} days</span></div>
+   <div class="chart"><div class="yax"><span>100</span><span>75</span><span>50</span><span>25</span><span>0</span></div><div class="bars">${days.map(d=>{const v=byD[d].s/byD[d].n*100;return `<div class="b" title="${fd(d)}: ${v.toFixed(0)}% present"><div><i style="height:${100-v}%"></i><i style="height:${v}%"></i></div><small>${fd(d).replace(/^(\w+), (\d+) (\w+)$/,'$1 $2')}</small></div>`}).join('')}</div></div>
+   <div class="legend" style="margin-top:12px"><span>Present</span><span>Absent</span></div></div></div>
+  <div class="card"><div class="ch"><h3>Top 10 lowest attendance</h3><span class="sel">${period} lecture days</span></div><div class="scroll"><table><thead><tr><th>S.No</th><th>Student</th><th>Class</th><th>Roll</th><th>Attendance</th><th>Present</th><th>Absent</th></tr></thead><tbody>
+  ${rows.sort((a,b)=>a.r.p-b.r.p).slice(0,10).map((o,i)=>`<tr><td>${String(i+1).padStart(2,'0')}</td><td>${role()==='teacher'?esc(o.x.name):'Student '+o.x.roll}</td><td>${esc(cname(o.x.classId))}</td><td>${o.x.roll}</td><td style="width:18%">${bar(o.r.p)}</td><td>${o.r.p.toFixed(0)}%</td><td>${(100-o.r.p).toFixed(0)}%</td></tr>`).join('')||'<tr><td colspan="7" class="muted">No attendance data yet.</td></tr>'}</tbody></table></div></div>`;
+}
+
+function att(){
+  const st=D.students.filter(s=>s.classId===selClass).sort((a,b)=>a.roll-b.roll);const key=selClass+'|'+selDate;const cur=Object.assign({},D.att[key]||{},tmp[key]||{});
+  const N={P:'Present',A:'Absent',L:'Late'};
+  return `<h1>Mark attendance</h1><p class="sub">Select class and date, then mark each student.</p><div class="card"><div class="row"><label>Class<select id="cs">${classOpts()}</select></label><label>Date<input type="date" id="dt" value="${selDate}"></label><button class="btn" data-a="allp">Mark all present</button></div>
+  ${st.length?`<div class="scroll" style="margin-top:12px"><table><thead><tr><th>Roll</th><th>Name</th><th>Status</th></tr></thead><tbody>${st.map(s=>`<tr><td>${s.roll}</td><td>${esc(s.name)}</td><td><div class="seg">${['P','A','L'].map(m=>`<button class="${m} ${(cur[s.id]||'P')===m?'on':''}" data-m="${m}" data-s="${s.id}">${N[m]}</button>`).join('')}</div></td></tr>`).join('')}</tbody></table></div><div style="margin-top:14px"><button class="btn pri" data-a="save">Save attendance</button><span class="msg">${flash}</span></div>`:'<p class="muted">This class has no students yet.</p>'}</div>`;
+}
+function stu(){
+  const st=D.students.filter(s=>s.classId===selClass).sort((a,b)=>a.roll-b.roll);
+  return `<h1>Classes &amp; students</h1><p class="sub">Add classes and manage student records.</p>
+  <div class="card"><div class="row"><label>New class name<input id="cn" placeholder="TYBSc CS – Sem V"></label><button class="btn pri" data-a="addc">Add class</button><button class="btn" data-a="demo">Reload demo data</button></div><div class="err" id="e1"></div></div>
+  <div class="card"><div class="row"><label>Class<select id="cs">${classOpts()}</select></label>${selClass!=='all'&&selClass?'<button class="btn del" data-a="delc">Delete class</button>':''}</div>
+  <div class="row" style="margin-top:12px"><label>Roll<input id="sr" type="number" min="1"></label><label style="flex:2">Student name<input id="sn"></label><label>Parent mobile<input id="sp" inputmode="numeric" maxlength="10"></label><label>PIN<input id="sk" inputmode="numeric" maxlength="6" value="1234"></label><button class="btn pri" data-a="adds">Add student</button></div><div class="err" id="e2"></div>
+  <div class="scroll"><table><thead><tr><th>Roll</th><th>Name</th><th>Parent mobile</th><th>PIN</th><th></th></tr></thead><tbody>${st.map(s=>`<tr><td>${s.roll}</td><td>${esc(s.name)}</td><td>${esc(s.parent||'-')}</td><td>${esc(s.pin||'1234')}</td><td><button class="btn sm del" data-del="${s.id}">Delete</button></td></tr>`).join('')||'<tr><td colspan="5" class="muted">No students in this class.</td></tr>'}</tbody></table></div></div>`;
+}
+function rep(){
+  const st=D.students.filter(s=>s.classId===selClass).sort((a,b)=>a.roll-b.roll);
+  return `<h1>Reports</h1><p class="sub">Late counts as half a day. Below 75% is a defaulter.</p><div class="card"><div class="row"><label>Class<select id="cs">${classOpts()}</select></label><button class="btn pri" data-a="csv">Export CSV</button></div>
+  <div class="scroll" style="margin-top:12px"><table><thead><tr><th>Roll</th><th>Name</th><th>P</th><th>L</th><th>A</th><th>Attendance</th><th>%</th><th>Status</th></tr></thead><tbody>${st.map(s=>{const r=score(s.id,selClass);return `<tr><td>${s.roll}</td><td>${esc(s.name)}</td>${r?`<td>${r.P}</td><td>${r.L}</td><td>${r.A}</td><td style="width:20%">${bar(r.p)}</td><td>${r.p.toFixed(1)}</td><td><span class="tag ${r.p<75?'no':'ok'}">${r.p<75?'Defaulter':'Regular'}</span></td>`:'<td colspan="6" class="muted">No data</td>'}</tr>`}).join('')||'<tr><td colspan="8" class="muted">No students.</td></tr>'}</tbody></table></div></div>`;
+}
+function view(){
+  const locked=role()&&role()!=='teacher';
+  const st=locked?session.ids.map(id=>D.students.find(x=>x.id===id)).filter(Boolean):D.students.filter(s=>s.classId===selClass).sort((a,b)=>a.roll-b.roll);
+  if(!st.find(s=>s.id===vs))vs=(st[0]||{}).id;
+  const s=st.find(x=>x.id===vs);if(s)selClass=s.classId;const r=s&&score(s.id,selClass);
+  let body='<p class="muted">Select a class and student.</p>';
+  if(s&&!r)body='<p class="muted">No attendance marked yet.</p>';
+  if(r){const need=Math.ceil((0.75*r.days-r.s)/0.25),miss=Math.floor(r.s/0.75-r.days);const L={P:['ok','Present'],A:['no','Absent'],L:['late','Late']};
+   const ds=dts(selClass).filter(d=>D.att[selClass+'|'+d][s.id]).reverse().slice(0,20);
+   body=`<div class="row" style="align-items:center;gap:22px"><div class="ring ${r.p<75?'low':''}" style="--v:${r.p.toFixed(1)}"><div>${Math.round(r.p)}%</div></div><div style="flex:1;min-width:180px"><h3 style="font-size:18px">${esc(s.name)}</h3><p class="muted" style="margin:2px 0 8px">${esc(cname(s.classId))} &middot; Roll ${s.roll}</p>${bar(r.p)}<p class="muted" style="margin:6px 0 0">${r.days} lectures: ${r.P} present, ${r.L} late, ${r.A} absent</p></div></div>
+   <div class="note ${r.p<75?'':'ok'}">${r.p<75?`Attendance is below 75%. Attend the next ${need} lecture${need>1?'s':''} in a row to reach 75%.`:`Attendance is above 75%. Up to ${Math.max(0,miss)} more lecture${miss===1?'':'s'} can be missed.`}</div>
+   <h3 style="margin:18px 0 6px">Recent days</h3><div class="scroll"><table><tbody>${ds.map(d=>{const m=L[D.att[selClass+'|'+d][s.id]];return `<tr><td>${fd(d)}</td><td><span class="tag ${m[0]}">${m[1]}</span></td></tr>`}).join('')}</tbody></table></div>`}
+  return `<h1>${locked?(role()==='student'?'My attendance':'Child attendance'):'Student / parent view'}</h1><p class="sub">${locked?'Your attendance record, updated by the teacher.':'Check any student attendance record.'}</p><div class="card">${locked&&st.length<2?'':`<div class="row">${locked?'':`<label>Class<select id="cs">${classOpts()}</select></label>`}<label>Student<select id="vsel">${st.map(x=>`<option value="${x.id}" ${x.id===vs?'selected':''}>${x.roll}. ${esc(x.name)}</option>`).join('')}</select></label></div>`}<div style="margin-top:16px">${body}</div></div>`;
+}
+function csv(){const rows=[['Roll','Name','Present','Late','Absent','Percentage','Status']];
+  D.students.filter(s=>s.classId===selClass).sort((a,b)=>a.roll-b.roll).forEach(s=>{const r=score(s.id,selClass);rows.push(r?[s.roll,s.name,r.P,r.L,r.A,r.p.toFixed(1),r.p<75?'Defaulter':'Regular']:[s.roll,s.name,0,0,0,'','No data'])});
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(l=>l.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n'));a.download=cname(selClass).replace(/\W+/g,'_')+'_report.csv';document.body.appendChild(a);a.click();a.remove()}
+
+const role=()=>session&&session.role;
+const allowed=()=>role()==='teacher'?['dash','att','stu','rep','view']:role()?['dash','view']:['dash'];
+const plabel=k=>k==='view'&&role()==='student'?'My attendance':k==='view'&&role()==='parent'?'Child attendance':PAGES[k][0];
+function acct(){
+  if(!session)return `<button class="ib" id="loginOpen">${ic('user')}Login</button>`;
+  const k=session.ids?D.students.find(x=>x.id===session.ids[0]):null;
+  const nm=role()==='teacher'?'Teacher':role()==='student'?(k?k.name:'Student'):'of '+(k?k.name.split(' ')[0]:'child');
+  const lab=role()==='parent'?'Parent':role()==='student'?'Student':'Hello,';
+  return `<div class="hello"><div class="av">${esc(nm.replace(/^of /,'')[0]||'U')}</div><div><span>${lab}</span><br><b>${esc(nm)}</b></div></div><button class="ib" id="logout">Log out</button>`;
+}
+const HINT={teacher:'Demo: admin / admin123',student:'Demo: TYBSc CS, roll 3, PIN 1234',parent:'Demo: mobile 9876500003, PIN 1234'};
+const RN={teacher:'Teacher',student:'Student',parent:'Parent'};
+function modalUI(){
+  $('#roles').innerHTML=Object.keys(RN).map(r=>`<button class="${r===lrole?'on':''}" data-lr="${r}">${RN[r]}</button>`).join('');
+  $('#lhint').textContent=HINT[lrole];$('#lerr').textContent='';
+  $('#lform').innerHTML=lrole==='teacher'?`<label>Username<input id="u" value="admin" autocomplete="username"></label><label>Password<input id="pw" type="password" autocomplete="current-password"></label>`
+  :lrole==='student'?`<label>Class<select id="lc">${D.classes.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></label><label>Roll number<input id="lr" type="number" min="1"></label><label>PIN<input id="lp" type="password" inputmode="numeric" maxlength="6"></label>`
+  :`<label>Parent mobile number<input id="lm" inputmode="numeric" maxlength="10"></label><label>PIN<input id="lp" type="password" inputmode="numeric" maxlength="6"></label>`;
+}
+const openM=()=>{modalUI();$('#modal').classList.remove('hide')};
+const closeM=()=>$('#modal').classList.add('hide');
+function doLogin(){const E=m=>{$('#lerr').textContent=m};
+  if(lrole==='teacher'){if($('#u').value.trim()!=='admin'||$('#pw').value!=='admin123')return E('Wrong username or password.');session={role:'teacher'};page='dash'}
+  else if(lrole==='student'){const x=D.students.find(s=>s.classId===$('#lc').value&&s.roll===parseInt($('#lr').value,10)&&(s.pin||'1234')===$('#lp').value);if(!x)return E('No student found. Check class, roll number and PIN.');session={role:'student',ids:[x.id]};vs=x.id;page='view'}
+  else{const m=$('#lm').value.trim(),ks=D.students.filter(s=>s.parent&&s.parent===m&&(s.pin||'1234')===$('#lp').value);if(!ks.length)return E('No child found. Check mobile number and PIN.');session={role:'parent',ids:ks.map(k=>k.id)};vs=ks[0].id;page='view'}
+  closeM();render();scrollTo(0,0)}
+function render(){
+  document.body.classList.toggle('guest',!session);
+  if(!allowed().includes(page))page='dash';
+  if(page!=='dash'&&selClass==='all')selClass=(D.classes[0]||{}).id||'';
+  $('#side').innerHTML=allowed().map(k=>`<button class="${k===page?'on':''}" data-p="${k}">${ic(PAGES[k][1])}${plabel(k)}</button>`).join('');
+  $('#acct').innerHTML=acct();
+  $('#main').innerHTML={dash,att,stu,rep,view}[page]();
+}
+function go(p){page=p;flash='';$('#side').classList.remove('open');$('#scrim').classList.remove('open');render();scrollTo(0,0)}
+document.addEventListener('click',e=>{
+  if(e.target.id==='modal'){closeM();return}
+  const t=e.target.closest('button,#scrim');if(!t)return;
+  if(t.id==='burger'||t.id==='scrim'){$('#side').classList.toggle('open');$('#scrim').classList.toggle('open');return}
+  if(t.id==='theme'){const h=document.documentElement;const d=(h.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark';h.dataset.theme=d?'light':'dark';return}
+  if(t.dataset.login){lrole=t.dataset.login;return openM()}
+  if(t.id==='loginOpen')return openM();
+  if(t.id==='mclose')return closeM();
+  if(t.dataset.lr){lrole=t.dataset.lr;return modalUI()}
+  if(t.id==='loginBtn')return doLogin();
+  if(t.id==='logout'){session=null;page='dash';selClass='all';return render()}
+  if(t.dataset.p)return go(t.dataset.p);
+  if(t.dataset.m){const k=selClass+'|'+selDate;(tmp[k]=tmp[k]||{})[t.dataset.s]=t.dataset.m;flash='';return render()}
+  if(t.dataset.del){D.students=D.students.filter(s=>s.id!==t.dataset.del);save();return render()}
+  switch(t.dataset.a){
+   case'demo':if(confirm('Replace current data with demo data?')){demo();selClass=D.classes[0].id;render()}break;
+   case'addc':{const v=$('#cn').value.trim();if(!v){$('#e1').textContent='Enter a class name.';break}const id=uid();D.classes.push({id,name:v});selClass=id;save();render();break}
+   case'delc':if(confirm('Delete this class, its students and attendance?')){D.students=D.students.filter(s=>s.classId!==selClass);Object.keys(D.att).forEach(k=>{if(k.startsWith(selClass+'|'))delete D.att[k]});D.classes=D.classes.filter(c=>c.id!==selClass);selClass=(D.classes[0]||{}).id||'';save();render()}break;
+   case'adds':{const r=parseInt($('#sr').value,10),n=$('#sn').value.trim(),pm=$('#sp').value.replace(/\D/g,'');
+     if(!selClass||!r||!n){$('#e2').textContent='Select a class and enter roll number and name.';break}
+     if(D.students.some(s=>s.classId===selClass&&s.roll===r)){$('#e2').textContent='Roll '+r+' already exists.';break}
+     if(pm&&pm.length!==10){$('#e2').textContent='Parent mobile must be 10 digits.';break}
+     D.students.push({id:uid(),classId:selClass,roll:r,name:n,parent:pm,pin:$('#sk').value.trim()||'1234'});save();render();break}
+   case'allp':{const k=selClass+'|'+selDate;tmp[k]={};D.students.filter(s=>s.classId===selClass).forEach(s=>tmp[k][s.id]='P');render();break}
+   case'save':{const k=selClass+'|'+selDate;const m={};D.students.filter(s=>s.classId===selClass).forEach(s=>{m[s.id]=(tmp[k]||{})[s.id]||(D.att[k]||{})[s.id]||'P'});D.att[k]=m;delete tmp[k];save();flash='Saved';render();break}
+   case'csv':csv();break}
+});
+document.addEventListener('change',e=>{const i=e.target.id;
+  if(i==='fc'||i==='cs'){selClass=e.target.value;flash='';render()}
+  if(i==='fp'){period=+e.target.value;render()}
+  if(i==='dt'){selDate=e.target.value||selDate;flash='';render()}
+  if(i==='vsel'){vs=e.target.value;render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM();if(e.key==='Enter'&&!$('#modal').classList.contains('hide'))doLogin()});
+$('#burger').innerHTML=ic('menu');$('#lg').innerHTML=ic('check').replace('<svg','<svg style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:3"');
+load();if(!D.classes.length)demo();selClass='all';render();
+</script>
+</body>
+</html>
